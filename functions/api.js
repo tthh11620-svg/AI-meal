@@ -1,7 +1,3 @@
-const WEATHER_DESCRIPTIONS = {
-  0: "맑음",
-  1: "구름 조금", 2: "구름 조금", 3: "구름 조금",
-};
 
 function getWeatherDesc(code) {
   if (code === 0) return "맑음";
@@ -140,17 +136,17 @@ export async function onRequestPost({ request, env }) {
   const lat = parseFloat(body.lat ?? 37.5665);
   const lon = parseFloat(body.lon ?? 126.978);
 
-  const ANTHROPIC_API_KEY = env.ANTHROPIC_API_KEY;
+  const OPENAI_API_KEY = env.OPENAI_API_KEY;
   const KAKAO_API_KEY = env.KAKAO_API_KEY;
 
   // 1. 날씨 조회
   const weather = await getWeather(lat, lon);
 
-  // 2. Claude AI 추천 생성
+  // 2. GPT AI 추천 생성
   let aiResult;
-  if (!ANTHROPIC_API_KEY || ANTHROPIC_API_KEY === "YOUR_ANTHROPIC_API_KEY") {
+  if (!OPENAI_API_KEY || OPENAI_API_KEY === "YOUR_OPENAI_API_KEY") {
     aiResult = {
-      nutrition_analysis: "Anthropic API 키가 설정되지 않았습니다. 실제 분석을 위해 API 키를 설정해주세요.",
+      nutrition_analysis: "OpenAI API 키가 설정되지 않았습니다. 실제 분석을 위해 API 키를 설정해주세요.",
       recommendations: {
         breakfast: { menu: "귀리죽", reason: "식이섬유와 단백질 보충" },
         lunch: { menu: "된장찌개 정식", reason: "발효식품으로 장 건강 개선" },
@@ -160,21 +156,20 @@ export async function onRequestPost({ request, env }) {
     };
   } else {
     const prompt = buildPrompt(meals, weather);
-    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+    const resp = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "x-api-key": ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
+        "Authorization": `Bearer ${OPENAI_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
+        model: "gpt-4o-mini",
         max_tokens: 1024,
         messages: [{ role: "user", content: prompt }],
       }),
     });
     const data = await resp.json();
-    let raw = data.content[0].text.trim();
+    let raw = data.choices[0].message.content.trim();
     if (raw.includes("```")) {
       raw = raw.split("```")[1];
       if (raw.startsWith("json")) raw = raw.slice(4);
