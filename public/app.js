@@ -242,7 +242,11 @@ function setLoading(on) {
 
 function showError(msg) {
   const box = document.getElementById("error-box");
-  box.textContent = msg;
+  let friendlyMsg = msg;
+  if (msg.includes("위치")) friendlyMsg = "위치 정보를 불러오지 못해 서울 기준으로 추천합니다.";
+  if (msg.includes("식당")) friendlyMsg = "식당 정보를 불러오지 못했지만 식단 추천은 정상 제공됩니다.";
+  if (msg.includes("500") || msg.includes("서버")) friendlyMsg = "일시적인 서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
+  box.textContent = friendlyMsg;
   box.classList.remove("hidden");
 }
 
@@ -255,7 +259,7 @@ function resetForm() {
   const list = document.getElementById("meal-list");
   list.innerHTML = `
     <div class="meal-row">
-      <input type="text" placeholder="예) 닭가슴살 샐러드, 김치찌개, 바나나 — 오늘 먹은 음식을 입력해주세요" class="meal-input" />
+      <input type="text" placeholder="예) 닭가슴살 샐러드, 김치찌개, 바나나, 삼각김밥" class="meal-input" />
       <button class="btn-remove" onclick="removeMeal(this)" title="삭제">✕</button>
     </div>
   `;
@@ -272,4 +276,11 @@ function resetForm() {
   document.getElementById("input-section").classList.remove("hidden");
   hideError();
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function toggleInfo() {
+  const content = document.getElementById("info-content");
+  const btn = document.getElementById("info-toggle-btn");
+  const isHidden = content.classList.toggle("hidden");
+  btn.textContent = isHidden ? "📚 식단·영양 가이드 보기" : "📚 식단·영양 가이드 닫기";
 }

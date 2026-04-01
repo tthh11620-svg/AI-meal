@@ -642,3 +642,27 @@ header {
   .nav-links { display: none; }
   .site-nav { gap: 8px; }
 }
+
+/* Info toggle */
+.info-toggle-section {
+  margin-bottom: 16px;
+}
+.info-toggle-btn {
+  width: 100%;
+  background: var(--card-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: 14px;
+  padding: 14px 20px;
+  font-size: 0.9rem;
+  color: #2d6a4f;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s;
+}
+.info-toggle-btn:hover {
+  background: var(--restaurant-item-bg);
+}
+.info-content {
+  margin-top: 8px;
+}
