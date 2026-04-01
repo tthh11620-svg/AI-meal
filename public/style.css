@@ -98,11 +98,16 @@ header h1 {
 /* Card */
 .card {
   background: var(--card-bg);
-  border-radius: 16px;
+  border-radius: 20px;
   padding: 24px;
   margin-bottom: 16px;
   box-shadow: 0 2px 12px var(--card-shadow);
+  border: 1px solid rgba(0,0,0,0.06);
   transition: background 0.3s;
+}
+
+body.dark .card {
+  border: 1px solid rgba(255,255,255,0.07);
 }
 
 .card h2 {
@@ -215,7 +220,7 @@ header h1 {
   background: linear-gradient(135deg, #2d6a4f, #40916c);
   color: #fff;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 14px;
   font-size: 1rem;
   font-weight: 700;
@@ -556,4 +561,84 @@ header h1 {
 header {
   text-align: center;
   margin-bottom: 24px;
+}
+
+/* Input guide */
+.input-guide {
+  font-size: 0.83rem;
+  color: var(--hint);
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+/* Trust list */
+.trust-list {
+  list-style: none;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.trust-list li {
+  font-size: 0.82rem;
+  color: var(--hint);
+  line-height: 1.5;
+}
+
+/* Loading steps */
+.loading-step {
+  font-size: 1rem;
+  color: #2d6a4f;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.loading-steps {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.loading-steps .step {
+  font-size: 0.78rem;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: var(--restaurant-item-bg);
+  color: var(--hint);
+  transition: all 0.3s;
+}
+.loading-steps .step.active {
+  background: #2d6a4f;
+  color: #fff;
+}
+
+/* Meal reason label */
+.meal-reason-label {
+  font-size: 0.7rem;
+  color: var(--hint);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+  margin-top: 8px;
+}
+
+/* Restaurant phone */
+.restaurant-phone {
+  font-size: 0.8rem;
+  color: var(--hint);
+  margin-top: 2px;
+}
+
+/* Restaurant no link */
+.restaurant-no-link {
+  font-size: 0.78rem;
+  color: var(--hint);
+  white-space: nowrap;
+}
+
+/* Mobile improvements */
+@media (max-width: 500px) {
+  header h1 { font-size: 1.5rem; }
+  .subtitle { font-size: 0.88rem; }
+  .nav-links { display: none; }
+  .site-nav { gap: 8px; }
 }

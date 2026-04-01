@@ -169,12 +169,13 @@ function renderResult(data) {
       item.innerHTML = `
         <div class="restaurant-info">
           <div class="restaurant-name">${escapeHtml(r.name)}</div>
-          <div class="restaurant-address">${escapeHtml(r.address || "주소 정보 없음")}</div>
-          ${r.distance ? `<div class="restaurant-distance">${Number(r.distance).toLocaleString()}m</div>` : ""}
+          <div class="restaurant-address">📍 ${escapeHtml(r.address || "주소 정보 없음")}</div>
+          ${r.distance ? `<div class="restaurant-distance">🚶 도보 약 ${Math.round(Number(r.distance)/80)}분 (${Number(r.distance).toLocaleString()}m)</div>` : ""}
+          ${r.phone ? `<div class="restaurant-phone">📞 ${escapeHtml(r.phone)}</div>` : ""}
         </div>
         ${r.url && r.url !== "#"
-          ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener noreferrer" class="restaurant-link">지도 보기</a>`
-          : ""}
+          ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener noreferrer" class="restaurant-link">🗺️ 지도 보기</a>`
+          : '<span class="restaurant-no-link">정보 없음</span>'}
       `;
       restList.appendChild(item);
     });
@@ -212,10 +213,31 @@ function escapeHtml(str) {
     .replace(/"/g, "&quot;");
 }
 
+let loadingInterval = null;
+const loadingSteps = [
+  "식사 기록 분석 중...",
+  "날씨 정보 반영 중...",
+  "맞춤 식단 생성 중...",
+  "주변 식당 검색 중..."
+];
 function setLoading(on) {
   document.getElementById("loading").classList.toggle("hidden", !on);
   document.querySelector(".btn-submit").disabled = on;
-  if (on) document.getElementById("result-section").classList.add("hidden");
+  if (on) {
+    document.getElementById("result-section").classList.add("hidden");
+    let i = 0;
+    const stepEl = document.getElementById("loading-step");
+    const stepDots = document.querySelectorAll(".loading-steps .step");
+    stepEl.textContent = loadingSteps[0];
+    stepDots.forEach((s, idx) => s.classList.toggle("active", idx === 0));
+    loadingInterval = setInterval(() => {
+      i = (i + 1) % loadingSteps.length;
+      stepEl.textContent = loadingSteps[i];
+      stepDots.forEach((s, idx) => s.classList.toggle("active", idx === i));
+    }, 1500);
+  } else {
+    if (loadingInterval) { clearInterval(loadingInterval); loadingInterval = null; }
+  }
 }
 
 function showError(msg) {
@@ -233,7 +255,7 @@ function resetForm() {
   const list = document.getElementById("meal-list");
   list.innerHTML = `
     <div class="meal-row">
-      <input type="text" placeholder="예: 삼겹살, 된장찌개, 치킨..." class="meal-input" />
+      <input type="text" placeholder="예) 닭가슴살 샐러드, 김치찌개, 바나나 — 오늘 먹은 음식을 입력해주세요" class="meal-input" />
       <button class="btn-remove" onclick="removeMeal(this)" title="삭제">✕</button>
     </div>
   `;

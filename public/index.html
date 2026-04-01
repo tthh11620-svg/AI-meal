@@ -32,8 +32,8 @@
     </nav>
 
     <header>
-      <h1>🍱 AI 식단 추천</h1>
-      <p class="subtitle">날씨와 영양 균형을 고려한 오늘의 맞춤 식단</p>
+      <h1>오늘 뭐 먹지? AI가 골라드릴게요</h1>
+      <p class="subtitle">최근 식사 기록과 오늘 날씨를 분석해, 부족한 영양을 채운 맞춤 식단을 추천해드립니다.</p>
     </header>
 
     <!-- 식사 기록 입력 -->
@@ -43,27 +43,39 @@
 
       <div id="meal-list">
         <div class="meal-row">
-          <input type="text" placeholder="예: 삼겹살, 된장찌개, 치킨..." class="meal-input" />
+          <input type="text" placeholder="예) 닭가슴살 샐러드, 김치찌개, 바나나 — 오늘 먹은 음식을 입력해주세요" class="meal-input" />
           <button class="btn-remove" onclick="removeMeal(this)" title="삭제">✕</button>
         </div>
       </div>
 
-      <button class="btn-add" onclick="addMealRow()">+ 식사 추가</button>
+      <p class="input-guide">💡 여러 음식은 쉼표로 구분해주세요. 최근 2~3일치를 입력할수록 분석이 정확해집니다.</p>
+      <button class="btn-add" onclick="addMealRow()">+ 다른 날 식사 추가</button>
 
       <div class="location-row">
         <span id="location-status" class="location-status">위치 정보 없음</span>
         <button class="btn-location" onclick="getLocation()">📍 현재 위치 가져오기</button>
       </div>
 
+      <ul class="trust-list">
+        <li>🔒 식사 기록은 분석 후 즉시 삭제되며 저장되지 않습니다</li>
+        <li>📍 위치 허용 없이도 기본(서울) 기준으로 이용 가능합니다</li>
+        <li>ℹ️ 의료 진단이 아닌 일반 식단 추천 서비스입니다</li>
+      </ul>
       <button class="btn-submit" onclick="submitRecommendation()">
-        AI 식단 추천 받기
+        오늘 식단 분석 시작하기
       </button>
     </section>
 
     <!-- 로딩 -->
     <div id="loading" class="loading hidden">
       <div class="spinner"></div>
-      <p>AI가 식단을 분석 중입니다...</p>
+      <p id="loading-step" class="loading-step">식사 기록 분석 중...</p>
+      <div class="loading-steps">
+        <span class="step active" data-step="1">식사 분석</span>
+        <span class="step" data-step="2">날씨 반영</span>
+        <span class="step" data-step="3">식단 생성</span>
+        <span class="step" data-step="4">식당 검색</span>
+      </div>
     </div>
 
     <!-- 결과 -->
@@ -94,16 +106,19 @@
           <div class="meal-card breakfast">
             <div class="meal-label">아침</div>
             <div id="breakfast-menu" class="meal-menu"></div>
+            <div class="meal-reason-label">추천 이유</div>
             <div id="breakfast-reason" class="meal-reason"></div>
           </div>
           <div class="meal-card lunch">
             <div class="meal-label">점심</div>
             <div id="lunch-menu" class="meal-menu"></div>
+            <div class="meal-reason-label">추천 이유</div>
             <div id="lunch-reason" class="meal-reason"></div>
           </div>
           <div class="meal-card dinner">
             <div class="meal-label">저녁</div>
             <div id="dinner-menu" class="meal-menu"></div>
+            <div class="meal-reason-label">추천 이유</div>
             <div id="dinner-reason" class="meal-reason"></div>
           </div>
         </div>
