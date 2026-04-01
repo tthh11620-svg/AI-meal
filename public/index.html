@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 식단 추천</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🍱 AI 식단 추천</h1>
+      <p class="subtitle">날씨와 영양 균형을 고려한 오늘의 맞춤 식단</p>
+    </header>
+
+    <!-- 식사 기록 입력 -->
+    <section class="card" id="input-section">
+      <h2>최근 식사 기록 입력</h2>
+      <p class="hint">최근 2~3일 동안 드신 음식을 입력해주세요.</p>
+
+      <div id="meal-list">
+        <div class="meal-row">
+          <input type="text" placeholder="예: 삼겹살, 된장찌개, 치킨..." class="meal-input" />
+          <button class="btn-remove" onclick="removeMeal(this)" title="삭제">✕</button>
+        </div>
+      </div>
+
+      <button class="btn-add" onclick="addMealRow()">+ 식사 추가</button>
+
+      <div class="location-row">
+        <span id="location-status" class="location-status">위치 정보 없음</span>
+        <button class="btn-location" onclick="getLocation()">📍 현재 위치 가져오기</button>
+      </div>
+
+      <button class="btn-submit" onclick="submitRecommendation()">
+        AI 식단 추천 받기
+      </button>
+    </section>
+
+    <!-- 로딩 -->
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <p>AI가 식단을 분석 중입니다...</p>
+    </div>
+
+    <!-- 결과 -->
+    <section id="result-section" class="hidden">
+
+      <!-- 날씨 -->
+      <div class="card weather-card">
+        <h2>현재 날씨</h2>
+        <div class="weather-info">
+          <span id="weather-icon" class="weather-icon"></span>
+          <div>
+            <p id="weather-desc" class="weather-desc"></p>
+            <p id="weather-temp" class="weather-temp"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 영양 분석 -->
+      <div class="card">
+        <h2>영양 분석</h2>
+        <p id="nutrition-analysis" class="analysis-text"></p>
+      </div>
+
+      <!-- 추천 식단 -->
+      <div class="card">
+        <h2>오늘의 추천 식단</h2>
+        <div class="meal-cards">
+          <div class="meal-card breakfast">
+            <div class="meal-label">아침</div>
+            <div id="breakfast-menu" class="meal-menu"></div>
+            <div id="breakfast-reason" class="meal-reason"></div>
+          </div>
+          <div class="meal-card lunch">
+            <div class="meal-label">점심</div>
+            <div id="lunch-menu" class="meal-menu"></div>
+            <div id="lunch-reason" class="meal-reason"></div>
+          </div>
+          <div class="meal-card dinner">
+            <div class="meal-label">저녁</div>
+            <div id="dinner-menu" class="meal-menu"></div>
+            <div id="dinner-reason" class="meal-reason"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 주변 식당 -->
+      <div class="card">
+        <h2>주변 추천 식당 <span id="search-keyword" class="keyword-badge"></span></h2>
+        <div id="restaurant-list" class="restaurant-list"></div>
+      </div>
+
+      <button class="btn-reset" onclick="resetForm()">다시 입력하기</button>
+    </section>
+
+    <!-- 에러 -->
+    <div id="error-box" class="error-box hidden"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

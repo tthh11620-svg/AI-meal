@@ -1,0 +1,8 @@
+functions/venv/
+functions/main.py
+functions/requirements.txt
+functions/firebase-debug.log
+firebase-debug.log
+.firebaserc
+.claude/
+*.log
