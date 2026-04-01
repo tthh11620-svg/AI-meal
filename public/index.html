@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI 식단 추천</title>
+  <title>AI 식단 추천 | 날씨와 영양 균형을 고려한 오늘의 맞춤 식단</title>
+  <meta name="description" content="최근 식사 기록과 현재 날씨를 AI가 분석하여 아침·점심·저녁 균형 잡힌 식단을 무료로 추천합니다. 주변 식당도 바로 찾아드려요." />
+  <meta name="keywords" content="AI 식단 추천, 식단 관리, 영양 분석, 오늘의 식단, 균형 식단, 날씨 맞춤 식단" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="AI 식단 추천 | 날씨와 영양 균형을 고려한 맞춤 식단" />
+  <meta property="og:description" content="최근 식사 기록과 현재 날씨를 AI가 분석하여 오늘의 균형 잡힌 식단을 추천합니다." />
+  <meta property="og:type" content="website" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#4CAF50" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -13,8 +19,19 @@
 </head>
 <body>
   <div class="container">
-    <header>
+
+    <!-- 네비게이션 -->
+    <nav class="site-nav">
+      <a href="/" class="nav-logo">🍱 AI 식단 추천</a>
+      <div class="nav-links">
+        <a href="/" class="active">홈</a>
+        <a href="/about.html">소개</a>
+        <a href="/privacy.html">개인정보처리방침</a>
+      </div>
       <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙 다크모드</button>
+    </nav>
+
+    <header>
       <h1>🍱 AI 식단 추천</h1>
       <p class="subtitle">날씨와 영양 균형을 고려한 오늘의 맞춤 식단</p>
     </header>
@@ -103,6 +120,80 @@
 
     <!-- 에러 -->
     <div id="error-box" class="error-box hidden"></div>
+
+    <!-- 영양 정보 콘텐츠 (오리지널 콘텐츠) -->
+    <section class="card info-section">
+      <h2>균형 잡힌 식단이 중요한 이유</h2>
+      <p class="info-text">세계보건기구(WHO)는 건강한 식단이 비만, 당뇨, 심혈관 질환 등 만성질환을 예방하는 데 핵심적인 역할을 한다고 강조합니다. 하루 세끼를 통해 탄수화물, 단백질, 지방, 비타민, 미네랄을 균형 있게 섭취하는 것이 중요합니다.</p>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-icon">🥗</div>
+          <div class="info-title">채소와 과일</div>
+          <div class="info-desc">하루 400g 이상의 채소·과일 섭취를 권장합니다. 식이섬유, 비타민C, 항산화 물질이 풍부합니다.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">🍚</div>
+          <div class="info-title">탄수화물</div>
+          <div class="info-desc">전체 열량의 55~65%를 탄수화물로 섭취하되, 정제 탄수화물보다 통곡물을 선택하세요.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">🥩</div>
+          <div class="info-title">단백질</div>
+          <div class="info-desc">체중 1kg당 0.8~1g의 단백질이 필요합니다. 육류, 생선, 두부, 콩류를 다양하게 섭취하세요.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">💧</div>
+          <div class="info-title">수분 섭취</div>
+          <div class="info-desc">하루 6~8잔(약 1.5~2L)의 물을 마시세요. 특히 더운 날씨나 운동 후에는 더 많이 필요합니다.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 날씨별 추천 음식 콘텐츠 -->
+    <section class="card info-section">
+      <h2>날씨별 추천 음식 가이드</h2>
+      <div class="weather-guide">
+        <div class="weather-guide-item">
+          <span class="wg-icon">🌧️</span>
+          <div>
+            <div class="wg-title">비 오는 날</div>
+            <div class="wg-desc">파전, 김치찌개, 순두부찌개, 삼계탕 등 따뜻한 국물 요리가 제격입니다. 습한 날씨에 몸을 따뜻하게 해주는 음식이 좋습니다.</div>
+          </div>
+        </div>
+        <div class="weather-guide-item">
+          <span class="wg-icon">☀️</span>
+          <div>
+            <div class="wg-title">맑고 더운 날</div>
+            <div class="wg-desc">냉면, 콩국수, 비빔밥, 샐러드 등 시원하고 가벼운 음식을 추천합니다. 수분이 많은 과일·채소도 좋습니다.</div>
+          </div>
+        </div>
+        <div class="weather-guide-item">
+          <span class="wg-icon">❄️</span>
+          <div>
+            <div class="wg-title">춥고 건조한 날</div>
+            <div class="wg-desc">설렁탕, 곰탕, 갈비탕, 해장국 등 뜨거운 국물 요리로 체온을 유지하고, 비타민C가 풍부한 과일로 면역력을 높이세요.</div>
+          </div>
+        </div>
+        <div class="weather-guide-item">
+          <span class="wg-icon">⛅</span>
+          <div>
+            <div class="wg-title">흐린 날</div>
+            <div class="wg-desc">기분을 밝게 해줄 색깔 있는 음식이 좋습니다. 고구마, 당근, 파프리카 등 비타민이 풍부한 채소를 포함한 균형 잡힌 식단을 추천합니다.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="site-footer">
+      <div class="footer-links">
+        <a href="/">홈</a>
+        <a href="/about.html">소개</a>
+        <a href="/privacy.html">개인정보처리방침</a>
+      </div>
+      <p class="footer-copy">© 2024 AI 식단 추천. 본 서비스는 의료 조언을 대체하지 않습니다.</p>
+    </footer>
+
   </div>
 
   <script src="app.js"></script>

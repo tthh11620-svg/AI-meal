@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>개인정보처리방침 | AI 식단 추천</title>
+  <meta name="description" content="AI 식단 추천 서비스의 개인정보처리방침입니다." />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#4CAF50" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .policy-content h2 { font-size: 1.1rem; color: #2d6a4f; margin: 24px 0 10px; font-weight: 700; }
+    .policy-content p, .policy-content li { font-size: 0.95rem; line-height: 1.8; color: var(--analysis-text); margin-bottom: 8px; }
+    .policy-content ul { padding-left: 20px; margin-bottom: 12px; }
+    .policy-date { font-size: 0.85rem; color: var(--hint); margin-bottom: 24px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="site-nav">
+      <a href="/" class="nav-logo">🍱 AI 식단 추천</a>
+      <div class="nav-links">
+        <a href="/">홈</a>
+        <a href="/about.html">소개</a>
+        <a href="/privacy.html" class="active">개인정보처리방침</a>
+      </div>
+      <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙 다크모드</button>
+    </nav>
+
+    <div class="card policy-content" style="margin-top:24px;">
+      <h1 style="font-size:1.4rem;color:#2d6a4f;margin-bottom:8px;">개인정보처리방침</h1>
+      <p class="policy-date">시행일: 2024년 1월 1일</p>
+
+      <p>AI 식단 추천(이하 "서비스")은 이용자의 개인정보를 중요하게 생각하며, 관련 법령을 준수합니다.</p>
+
+      <h2>1. 수집하는 정보</h2>
+      <p>서비스 이용 시 다음 정보가 처리될 수 있습니다:</p>
+      <ul>
+        <li><strong>위치 정보</strong>: 주변 식당 검색을 위한 GPS 좌표 (위도/경도). 이용자의 명시적 동의 후에만 수집되며 서버에 저장되지 않습니다.</li>
+        <li><strong>식사 기록</strong>: 입력하신 음식 정보. 서버에서 AI 분석 후 즉시 삭제되며 저장되지 않습니다.</li>
+        <li><strong>접속 로그</strong>: 서비스 품질 개선을 위한 일반적인 접속 기록 (IP 주소, 브라우저 정보).</li>
+      </ul>
+
+      <h2>2. 정보 이용 목적</h2>
+      <ul>
+        <li>AI 기반 맞춤 식단 추천 서비스 제공</li>
+        <li>현재 날씨에 맞는 식단 분석</li>
+        <li>주변 식당 검색 결과 제공</li>
+        <li>서비스 품질 개선 및 오류 분석</li>
+      </ul>
+
+      <h2>3. 제3자 서비스</h2>
+      <p>본 서비스는 다음 외부 서비스를 이용합니다:</p>
+      <ul>
+        <li><strong>OpenAI API</strong>: 식단 추천 AI 분석. OpenAI의 개인정보처리방침이 적용됩니다.</li>
+        <li><strong>카카오 로컬 API</strong>: 주변 식당 검색. 카카오의 개인정보처리방침이 적용됩니다.</li>
+        <li><strong>Open-Meteo API</strong>: 날씨 정보 제공. 별도 개인정보 수집 없음.</li>
+        <li><strong>Google AdSense</strong>: 광고 서비스 제공. Google의 개인정보처리방침이 적용됩니다.</li>
+      </ul>
+
+      <h2>4. 쿠키 및 로컬 저장소</h2>
+      <p>서비스는 다크/라이트 모드 설정 저장을 위해 브라우저의 로컬 저장소(localStorage)를 사용합니다. 이는 이용자의 기기에만 저장되며 외부로 전송되지 않습니다.</p>
+
+      <h2>5. 정보 보관 기간</h2>
+      <p>위치 정보 및 식사 기록은 API 요청 처리 후 즉시 삭제됩니다. 서버 로그는 최대 30일간 보관 후 파기됩니다.</p>
+
+      <h2>6. 이용자 권리</h2>
+      <p>이용자는 언제든지 위치 정보 제공을 거부할 수 있으며, 이 경우 서울시청(기본 위치)을 기준으로 서비스가 제공됩니다.</p>
+
+      <h2>7. 문의</h2>
+      <p>개인정보 관련 문의사항이 있으시면 서비스 내 문의 채널을 통해 연락해 주시기 바랍니다.</p>
+    </div>
+
+    <footer class="site-footer">
+      <div class="footer-links">
+        <a href="/">홈</a>
+        <a href="/about.html">소개</a>
+        <a href="/privacy.html">개인정보처리방침</a>
+      </div>
+      <p class="footer-copy">© 2024 AI 식단 추천. 본 서비스는 의료 조언을 대체하지 않습니다.</p>
+    </footer>
+  </div>
+  <script>
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle("dark");
+      document.getElementById("theme-btn").textContent = isDark ? "☀️ 라이트모드" : "🌙 다크모드";
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    }
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark");
+      document.getElementById("theme-btn").textContent = "☀️ 라이트모드";
+    }
+  </script>
+</body>
+</html>
