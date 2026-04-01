@@ -1,8 +1,16 @@
-// 에뮬레이터(localhost:5000)와 배포 환경 자동 분기
-// 에뮬레이터에서는 Hosting rewrites가 동작하므로 /api 그대로 사용 가능
 const API_URL = "/api";
 
+function toggleTheme() {
+  const isDark = document.body.classList.toggle("dark");
+  document.getElementById("theme-btn").textContent = isDark ? "☀️ 라이트모드" : "🌙 다크모드";
+  localStorage.setItem("theme", isDark ? "dark" : "light");
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+    document.getElementById("theme-btn").textContent = "☀️ 라이트모드";
+  }
   // 초기 입력행에 Enter 키 이벤트 등록
   document.querySelector(".meal-input").addEventListener("keydown", handleEnterKey);
 
@@ -77,7 +85,7 @@ function getLocation() {
       status.className = "location-status active";
       btn.disabled = false;
     },
-    (err) => {
+    () => {
       status.textContent = "위치 정보를 가져올 수 없습니다. 기본 위치(서울)로 진행합니다.";
       btn.disabled = false;
       userLat = 37.5665;
