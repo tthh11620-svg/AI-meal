@@ -21,12 +21,14 @@
     {
       "source": "functions",
       "codebase": "default",
-      "runtime": "python311",
+      "runtime": "nodejs18",
       "ignore": [
-        "venv",
+        "node_modules",
         ".git",
         "firebase-debug.log",
-        "firebase-debug.*.log"
+        "firebase-debug.*.log",
+        "venv",
+        "*.py"
       ]
     }
   ],

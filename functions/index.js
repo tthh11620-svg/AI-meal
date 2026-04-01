@@ -1,0 +1,186 @@
+const { onRequest } = require("firebase-functions/v2/https");
+
+// ─── 날씨 설명 ────────────────────────────────────────────────
+function getWeatherDesc(code) {
+  if (code === 0) return "맑음";
+  if (code >= 1 && code <= 3) return "구름 조금";
+  if (code >= 45 && code <= 57) return "안개/이슬비";
+  if (code >= 61 && code <= 67) return "비";
+  if (code >= 71 && code <= 77) return "눈";
+  if (code >= 80 && code <= 82) return "소나기";
+  if (code >= 95 && code <= 99) return "뇌우";
+  return "흐림";
+}
+
+// ─── Open-Meteo 날씨 조회 ────────────────────────────────────
+async function getWeather(lat, lon) {
+  const params = new URLSearchParams({
+    latitude: lat,
+    longitude: lon,
+    current: "temperature_2m,precipitation,weathercode,windspeed_10m",
+    timezone: "Asia/Seoul",
+  });
+  try {
+    const resp = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
+    const data = await resp.json();
+    const current = data.current ?? {};
+    const code = current.weathercode ?? 0;
+    return {
+      temperature: current.temperature_2m ?? "알 수 없음",
+      precipitation: current.precipitation ?? 0,
+      windspeed: current.windspeed_10m ?? 0,
+      description: getWeatherDesc(code),
+      code,
+    };
+  } catch (e) {
+    return { description: "날씨 정보 없음", temperature: "알 수 없음", error: e.message };
+  }
+}
+
+// ─── 카카오 식당 검색 ────────────────────────────────────────
+async function searchRestaurants(lat, lon, keyword, kakaoKey) {
+  if (!kakaoKey || kakaoKey === "YOUR_KAKAO_API_KEY") {
+    return [{ name: "카카오 API 키 미설정 - 플레이스홀더 식당", address: "주소 없음", url: "#" }];
+  }
+  const params = new URLSearchParams({
+    query: keyword,
+    x: lon,
+    y: lat,
+    radius: 1000,
+    size: 5,
+    sort: "distance",
+  });
+  try {
+    const resp = await fetch(`https://dapi.kakao.com/v2/local/search/keyword.json?${params}`, {
+      headers: { Authorization: `KakaoAK ${kakaoKey}` },
+    });
+    const data = await resp.json();
+    return (data.documents ?? []).map((doc) => ({
+      name: doc.place_name ?? "",
+      address: doc.road_address_name || doc.address_name || "",
+      distance: doc.distance ?? "",
+      url: doc.place_url ?? "#",
+      phone: doc.phone ?? "",
+    }));
+  } catch (e) {
+    return [{ name: `검색 오류: ${e.message}`, address: "", url: "#" }];
+  }
+}
+
+// ─── AI 프롬프트 생성 ────────────────────────────────────────
+function buildPrompt(meals, weather) {
+  const mealText = meals.length > 0 ? meals.map((m) => `- ${m}`).join("\n") : "- 기록 없음";
+  const isRainy = weather.precipitation > 0 || (weather.code >= 61 && weather.code <= 99);
+
+  return `당신은 한국의 전문 영양사이자 식단 추천 AI입니다.
+
+## 사용자 정보
+### 최근 식사 기록 (최신순):
+${mealText}
+
+### 현재 날씨:
+- 날씨 상태: ${weather.description}
+- 기온: ${weather.temperature}°C
+- 강수 여부: ${isRainy ? "비/눈 옴" : "없음"}
+
+## 지시사항
+위 정보를 바탕으로 다음을 수행하세요:
+
+1. **영양 분석**: 최근 식사 기록에서 부족하거나 과잉된 영양소/식품군을 파악하세요.
+2. **오늘 추천 식단**: 아침/점심/저녁 3끼를 추천하세요.
+   - 날씨가 비/눈이면 파전, 국물 요리(김치찌개, 순두부찌개, 삼계탕 등) 우선 고려
+   - 추운 날씨(15°C 이하)면 따뜻한 요리 우선
+   - 더운 날씨(28°C 이상)면 시원한 요리 우선
+3. **검색 키워드**: 점심 추천 메뉴를 주변에서 찾기 위한 Kakao 검색 키워드 1개 (예: "김치찌개")
+
+반드시 아래 JSON 형식으로만 응답하세요. 다른 텍스트 없이 JSON만 출력하세요:
+
+{
+  "nutrition_analysis": "영양 분석 내용 (2-3문장)",
+  "recommendations": {
+    "breakfast": { "menu": "메뉴 이름", "reason": "추천 이유 (1문장)" },
+    "lunch":     { "menu": "메뉴 이름", "reason": "추천 이유 (1문장)" },
+    "dinner":    { "menu": "메뉴 이름", "reason": "추천 이유 (1문장)" }
+  },
+  "restaurant_keyword": "검색키워드"
+}`;
+}
+
+// ─── Firebase Function: api ───────────────────────────────────
+exports.api = onRequest(
+  {
+    region: "asia-northeast3",   // 서울 리전
+    cors: true,
+    secrets: ["OPENAI_API_KEY", "KAKAO_API_KEY"],
+  },
+  async (req, res) => {
+    if (req.method === "OPTIONS") {
+      res.set("Access-Control-Allow-Origin", "*");
+      res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+      res.set("Access-Control-Allow-Headers", "Content-Type");
+      return res.status(204).send("");
+    }
+
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "POST 요청만 허용됩니다." });
+    }
+
+    const body = req.body ?? {};
+    const meals = body.meals ?? [];
+    const lat = parseFloat(body.lat ?? 37.5665);
+    const lon = parseFloat(body.lon ?? 126.978);
+
+    const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+    const KAKAO_API_KEY = process.env.KAKAO_API_KEY;
+
+    // 1. 날씨 조회
+    const weather = await getWeather(lat, lon);
+
+    // 2. GPT 식단 추천
+    let aiResult;
+    if (!OPENAI_API_KEY || OPENAI_API_KEY === "YOUR_OPENAI_API_KEY") {
+      aiResult = {
+        nutrition_analysis: "OpenAI API 키가 설정되지 않았습니다.",
+        recommendations: {
+          breakfast: { menu: "귀리죽", reason: "식이섬유와 단백질 보충" },
+          lunch:     { menu: "된장찌개 정식", reason: "발효식품으로 장 건강 개선" },
+          dinner:    { menu: "연어 샐러드", reason: "오메가-3 지방산 보충" },
+        },
+        restaurant_keyword: "된장찌개",
+      };
+    } else {
+      const prompt = buildPrompt(meals, weather);
+      const resp = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          max_tokens: 1024,
+          messages: [{ role: "user", content: prompt }],
+        }),
+      });
+      const data = await resp.json();
+      let raw = data.choices[0].message.content.trim();
+      if (raw.includes("```")) {
+        raw = raw.split("```")[1];
+        if (raw.startsWith("json")) raw = raw.slice(4);
+      }
+      aiResult = JSON.parse(raw);
+    }
+
+    // 3. 주변 식당 검색
+    const keyword = aiResult.restaurant_keyword ?? "맛집";
+    const restaurants = await searchRestaurants(lat, lon, keyword, KAKAO_API_KEY);
+
+    return res.status(200).json({
+      weather,
+      nutrition_analysis: aiResult.nutrition_analysis ?? "",
+      recommendations: aiResult.recommendations ?? {},
+      restaurants,
+      search_keyword: keyword,
+    });
+  }
+);

@@ -1,3 +1,6 @@
+.env
+.dev.vars
+functions/.env
 functions/venv/
 functions/main.py
 functions/requirements.txt
